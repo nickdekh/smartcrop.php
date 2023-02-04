@@ -2,6 +2,7 @@
 
 namespace Nickdekh\SmartcropPhp;
 
+use GuzzleHttp\Client;
 use SplFixedArray;
 
 class Smartcrop
@@ -87,7 +88,13 @@ class Smartcrop
         if (!is_string($image) && get_resource_type($image) === 'gd') {
             $this->oImg = $image;
         } else {
-            $this->oImg = imagecreatefromstring(file_get_contents($image));
+            if (strtolower(substr($image, 0, 4)) == 'http') {
+                $client = new Client();
+                $string = $client->get($image)->getBody()->__toString();
+            } else {
+                $string = file_get_contents($image);
+            }
+            $this->oImg = imagecreatefromstring($string);
         }
         return $this;
     }
