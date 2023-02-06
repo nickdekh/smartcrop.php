@@ -89,8 +89,8 @@ class Smartcrop
             $this->oImg = $image;
         } else {
             if (strtolower(substr($image, 0, 4)) == 'http') {
-                $client = new Client();
-                $string = $client->get($image)->getBody()->__toString();
+                $guzzle = new Client();
+                $string = $guzzle->get($image, ['timeout' => 20, 'verify' => false])->getBody()->__toString();
             } else {
                 $string = file_get_contents($image);
             }
