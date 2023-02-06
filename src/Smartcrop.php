@@ -76,8 +76,8 @@ class Smartcrop
     /**
      * Convert a image to gd resource
      *
-     * @param string $image
-     * @return Smartcrop
+     * @param resource|string $image
+     * @return Smartcrop|boolean
      */
     public function canvasImageOpen($image)
     {
@@ -264,7 +264,7 @@ class Smartcrop
      * @param integer $y
      * @param integer $w
      * @param integer $h
-     * @return integer
+     * @return float
      */
     public function edgeDetect($x, $y, $w, $h)
     {
@@ -353,7 +353,7 @@ class Smartcrop
     /**
      * Score a crop scheme
      *
-     * @param array $output
+     * @param SplFixedArray $output
      * @param array $crop
      * @return array
      */
@@ -368,7 +368,6 @@ class Smartcrop
         ];
 
         $downSample             = $this->options ['scoreDownSample'];
-        $invDownSample          = 1 / $downSample;
         $outputHeightDownSample = floor($this->h / $downSample) * $downSample;
         $outputWidthDownSample  = floor($this->w / $downSample) * $downSample;
         $outputWidth            = floor($this->w / $downSample);
@@ -433,19 +432,17 @@ class Smartcrop
     public function sample($x, $y)
     {
         $p = $y * $this->w + $x;
-        if (isset ($this->aSample [$p])) {
-            return $this->aSample [$p];
-        } else {
+        if (!isset ($this->aSample [$p])) {
             $aRgbColor          = $this->getRgbColorAt($x, $y);
             $this->aSample [$p] = $this->cie($aRgbColor [0], $aRgbColor [1], $aRgbColor [2]);
-            return $this->aSample [$p];
         }
+        return $this->aSample [$p];
     }
 
     /**
      * @param integer $x
      * @param integer $y
-     * @return float
+     * @return int[]
      */
     public function getRgbColorAt($x, $y)
     {
